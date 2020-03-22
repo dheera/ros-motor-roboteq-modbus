@@ -8,7 +8,10 @@ This is a ROS node for Roboteq brushless motor controllers used in Modbus-ASCII 
 * **baud** -- baud rate. Default is 115200.
 * **num\_channels** -- number of channels in the Roboteq. Default is 2.
 
-## Outputs topics:
+## Subscribers:
+* **/command** (std\_msgs/Int32MultiArray) -- motor command. Array values must have the same number of values as the num\_channels parameter above. Each value must be between -1000 and 1000 inclusive.
+
+## Publishers:
 * **/brushless\_count** (std\_msgs/Int32MultiArray) -- brushless count, per channel
 * **/brushless\_speed** (std\_msgs/Float32MultiArray) -- brushless speed, per channel
 * **/closed\_loop\_error** (std\_msgs/Int32MultiArray) -- closed loop error, per channel
