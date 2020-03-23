@@ -194,7 +194,7 @@ void RoboteqNode::spinOnce() {
     }
   }
 
-  if(seq % 30 == 30) {
+  if(seq % 30 == 0) {
     if(pub_temperature.getNumSubscribers() > 0) {
       auto temperature = roboteq->getTemperature();
       sensor_msgs::Temperature msg_temperature;
