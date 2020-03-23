@@ -214,8 +214,9 @@ int main(int argc, char *argv[]) {
 
     RoboteqNode roboteq_node(nh, nh_priv);
 
-    ros::Rate(60);
+    ros::Rate rate(60);
     while(ros::ok()) {
+      rate.sleep();
       roboteq_node.spinOnce();
     }
 }
