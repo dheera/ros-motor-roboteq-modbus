@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(roboteq_modbus)
+project(motor_roboteq_modbus)
 
 add_compile_options(-std=c++11)
 

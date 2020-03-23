@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <package>
-  <name>roboteq_modbus</name>
+  <name>motor_roboteq_modbus</name>
   <version>1.0.0</version>
   <description>Roboteq modbus</description>
   <maintainer email="dheera@dheera.net">dheera</maintainer>
