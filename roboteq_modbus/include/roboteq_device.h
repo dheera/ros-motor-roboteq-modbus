@@ -168,12 +168,13 @@ class RoboteqDevice {
   private:
     bool                             connect();
     bool                             disconnect();
-    unsigned char                    LRC(std::vector<unsigned char> msg);
-    uint32_t                         modbusParseQueryResponse(std::string input);
+    unsigned char                    LRC(const std::vector<unsigned char>& msg);
+    std::vector<unsigned char>       hexDecode(const std::string& input);
+    uint32_t                         modbusParseQueryResponse(const std::string& input);
     const std::string                modbusReadInputRegisters(unsigned int reg, unsigned int offset);
     const std::string                modbusWriteHoldingRegisters(unsigned int reg, unsigned int offset, uint32_t value);
-    bool writeLine(std::string line);
-    std::string readLine();
+    bool                             writeLine(const std::string& line);
+    const std::string                readLine();
 
     int                              baud;
     int                              num_channels;

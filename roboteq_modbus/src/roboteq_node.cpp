@@ -96,7 +96,7 @@ void RoboteqNode::onMotorCommand(const std_msgs::Int16MultiArray::ConstPtr& msg)
     }
 
     for(int i=0;i<param_num_channels;i++) {
-      roboteq->commandGo(i, msg->data[i]);
+      roboteq->commandGo(i+1, msg->data[i]);
     }
 }
 

@@ -150,7 +150,7 @@ const std::vector<float> RoboteqDevice::getVoltage() {
   return result;
 }
 
-bool RoboteqDevice::writeLine(std::string line) {
+bool RoboteqDevice::writeLine(const std::string& line) {
   if(!ser.isOpen()) return false;
 
   ser.flush();
@@ -160,42 +160,41 @@ bool RoboteqDevice::writeLine(std::string line) {
   return true;
 }
 
-std::string RoboteqDevice::readLine() {
-  return ser.readline((size_t)65536, "\r\n");
+const std::string RoboteqDevice::readLine() {
+  std::string line = ser.readline((size_t)65536, "\r\n");
+  line.erase(line.find_last_not_of(" \n\r\t")+1);
+  line.erase(0, line.find_first_not_of(" \n\r\t"));
+  return line;
 }
 
-unsigned char RoboteqDevice::LRC(std::vector<unsigned char> msg) {
+unsigned char RoboteqDevice::LRC(const std::vector<unsigned char>& msg) {
   unsigned char sum = 0;
   for(auto i=0;i<(int)msg.size();i++) sum += msg[i];
   return (unsigned char)(-(char)sum);
 }  
 
-uint32_t RoboteqDevice::modbusParseQueryResponse(std::string input) {
-  std::istringstream iss(input);
+std::vector<unsigned char> RoboteqDevice::hexDecode(const std::string& input) {
+  std::vector<unsigned char> output(input.size()/2);
+  for(auto i=0;i<(int)input.size()/2;i++) {
+    output[i] = std::stoul(input.substr(i*2,2), nullptr, 16);
+  }
+  return output;
+}
 
-  char start;
-  iss >> start;
-  if(start != ':') return 0;
+uint32_t RoboteqDevice::modbusParseQueryResponse(const std::string& input) {
+  if(input[0] != ':') return 0; // modbus strings must start with ':'
   
-  iss >> std::hex;
+  auto bytes = hexDecode(input.substr(1));
+  unsigned char lrc = bytes.back();
+  bytes.pop_back();
   
-  std::string s;
-
-  iss >> std::setw(2) >> s;
-  unsigned int node = std::stoul(s, nullptr, 16);
+  if(LRC(bytes) != lrc) return 0; // failed checksum
   
-  iss >> std::setw(2) >> s;
-  unsigned int function_code = std::stoul(s, nullptr, 16);
+  unsigned int node = bytes[0];
+  unsigned int function_code = bytes[1];
+  unsigned int data_length = bytes[2];
+  unsigned long int data = (bytes[3]<<24) | (bytes[4] <<16) | (bytes[5]<<8) | bytes[6];
   
-  iss >> std::setw(2) >> s;
-  unsigned int data_length = std::stoul(s, nullptr, 16);
-
-  iss >> std::setw(8) >> s;
-  unsigned long int data = std::stoul(s, nullptr, 16);
-  
-  iss >> std::setw(2) >> s;
-  unsigned int lrc = std::stoul(s, nullptr, 16);
-
   return data;
 }
 
